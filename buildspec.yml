@@ -1,20 +1,20 @@
 version: 0.2
+
 phases:
   install:
     runtime-versions:
-      python: 3.8
+      nodejs: 14
+  pre_build:
     commands:
-      - echo "Installing dependencies..."
-      - pip install -r requirements.txt -t lib
+      - echo Installing NPM dependencies...
+      - npm install
   build:
     commands:
-      - echo "Zipping deployment package..."
-      - cd lib
-      - zip -r9 ../deployment_package.zip .
-      - cd ..
-      - zip -g deployment_package.zip lambda_function.py
+      - echo Building Lambda function...
+      - zip -r index-photos.zip *
   post_build:
     commands:
-      - echo "Updating lambda Function..."
-      - aws lambda update-function-code --function-name index-photos --zip-file fileb://deployment_package.zip
-      - echo "DONE!!"
+      - echo Uploading package to S3...
+      - aws s3 cp index-photos.zip s3://lambda-build-photo-album/index-photos.zip
+      - echo Deploying to Lambda...
+      - aws lambda update-function-code --function-name index-photos --s3-bucket lambda-build-photo-album --s3-key index-photos.zip
