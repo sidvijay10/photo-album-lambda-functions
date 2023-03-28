@@ -1,5 +1,5 @@
 import json
-import boto3
+import boto3 
 
 from opensearchpy import OpenSearch, RequestsHttpConnection
 from requests_aws4auth import AWS4Auth
